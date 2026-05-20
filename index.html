@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ingliz Tili - 60 Kunlik Kurs</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap');
+
+  :root {
+    --primary: #1a1a2e;
+    --secondary: #16213e;
+    --accent: #0f3460;
+    --gold: #e94560;
+    --teal: #00b4d8;
+    --green: #06d6a0;
+    --yellow: #ffd166;
+    --purple: #c77dff;
+    --white: #f8f9fa;
+    --gray: #8892a4;
+    --card-bg: rgba(255,255,255,0.05);
+    --locked: #2a2a4a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--primary);
+    font-family: 'Nunito', sans-serif;
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* SPLASH SCREEN */
+  #splash {
+    position: fixed; inset: 0;
+    background: linear-gradient(135deg, #0f3460, #1a1a2e, #16213e);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 9999;
+    animation: splashOut 0.6s ease 2.5s forwards;
+  }
+  @keyframes splashOut {
+    to { opacity: 0; pointer-events: none; }
+  }
+  .splash-logo {
+    font-family: 'Baloo 2', cursive;
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--teal), var(--green), var(--yellow));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: pulse 1s ease infinite alternate;
+  }
+  @keyframes pulse { to { transform: scale(1.05); } }
+  .splash-sub {
+    color: var(--gray);
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .splash-powered {
+    position: absolute; bottom: 2rem;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    line-height: 1.6;
+  }
+  .splash-powered span {
+    color: var(--yellow);
+    font-weight: 700;
+  }
+  .splash-loader {
+    margin-top: 2rem;
+    width: 200px; height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .splash-loader-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--green));
+    border-radius: 2px;
+    animation: load 2.5s ease forwards;
+  }
+  @keyframes load { from { width: 0; } to { width: 100%; } }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, var(--accent), var(--secondary));
+    padding: 1.2rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(0,180,216,0.2);
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  .logo-text {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.6rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--teal), var(--green));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .progress-bar-wrap {
+    flex: 1; margin: 0 1.5rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px; height: 10px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--green));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+  }
+  .progress-text {
+    font-size: 0.85rem;
+    color: var(--yellow);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* MAIN */
+  main { padding: 1.5rem; max-width: 1100px; margin: 0 auto; }
+
+  /* CALENDAR GRID */
+  .section-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--teal);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.7rem;
+    margin-bottom: 2rem;
+  }
+
+  .day-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 0.8rem 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .day-card:hover:not(.locked) {
+    transform: translateY(-3px);
+    border-color: var(--teal);
+    box-shadow: 0 8px 20px rgba(0,180,216,0.2);
+  }
+  .day-card.locked {
+    cursor: not-allowed;
+    opacity: 0.4;
+    background: var(--locked);
+  }
+  .day-card.completed {
+    border-color: var(--green);
+    background: rgba(6,214,160,0.08);
+  }
+  .day-card.active {
+    border-color: var(--yellow);
+    background: rgba(255,209,102,0.1);
+    box-shadow: 0 0 20px rgba(255,209,102,0.2);
+  }
+  .day-card.today {
+    border-color: var(--gold);
+    animation: glow 2s ease infinite alternate;
+  }
+  @keyframes glow {
+    from { box-shadow: 0 0 10px rgba(233,69,96,0.3); }
+    to { box-shadow: 0 0 25px rgba(233,69,96,0.6); }
+  }
+  .day-num {
+    font-size: 1.5rem;
+    font-weight: 900;
+    font-family: 'Baloo 2', cursive;
+    color: var(--white);
+  }
+  .day-label {
+    font-size: 0.65rem;
+    color: var(--gray);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 0.2rem;
+  }
+  .day-icon { font-size: 1.2rem; margin-bottom: 0.2rem; }
+  .lock-icon { font-size: 1rem; opacity: 0.5; }
+
+  /* LESSON PAGE */
+  #lessonPage {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .back-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--white);
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+  .back-btn:hover { background: rgba(255,255,255,0.15); transform: translateX(-3px); }
+
+  .lesson-header {
+    background: linear-gradient(135deg, var(--accent), rgba(0,180,216,0.2));
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(0,180,216,0.3);
+  }
+  .lesson-day { font-size: 0.8rem; color: var(--teal); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+  .lesson-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0.3rem 0;
+  }
+  .lesson-desc { color: var(--gray); font-size: 0.95rem; }
+
+  /* TABS */
+  .tabs {
+    display: flex; gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+    color: var(--gray);
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: var(--teal);
+    color: var(--primary);
+    border-color: var(--teal);
+  }
+
+  /* VOCABULARY TAB */
+  .vocab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  .vocab-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    padding: 1.2rem;
+    display: flex; align-items: center; gap: 1rem;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .vocab-card:hover {
+    border-color: var(--purple);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(199,125,255,0.15);
+  }
+  .vocab-emoji { font-size: 2.2rem; flex-shrink: 0; }
+  .vocab-info { flex: 1; }
+  .vocab-en {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--white);
+    display: flex; align-items: center; gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .vocab-uz {
+    font-size: 0.9rem;
+    color: var(--gray);
+    margin-top: 0.2rem;
+  }
+  .vocab-example {
+    font-size: 0.8rem;
+    color: var(--teal);
+    margin-top: 0.3rem;
+    font-style: italic;
+  }
+  .speak-btn {
+    background: linear-gradient(135deg, var(--purple), var(--teal));
+    border: none;
+    border-radius: 8px;
+    padding: 0.4rem 0.7rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { transform: scale(1.1); }
+
+  /* READING TAB */
+  .reading-section { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 1.5rem; }
+  .reading-text { font-size: 1.05rem; line-height: 2; color: var(--white); }
+  .reading-word {
+    cursor: pointer;
+    border-bottom: 1px dashed rgba(0,180,216,0.4);
+    transition: all 0.15s;
+    display: inline;
+    padding: 0 1px;
+  }
+  .reading-word:hover { color: var(--teal); border-color: var(--teal); background: rgba(0,180,216,0.1); border-radius: 3px; }
+
+  /* WRITING TAB */
+  .writing-section { display: flex; flex-direction: column; gap: 1.2rem; }
+  .writing-prompt {
+    background: rgba(255,209,102,0.1);
+    border: 1px solid rgba(255,209,102,0.3);
+    border-radius: 14px;
+    padding: 1.2rem;
+  }
+  .writing-prompt-label { font-size: 0.8rem; color: var(--yellow); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+  .writing-prompt-text { font-size: 1rem; color: var(--white); font-weight: 600; }
+  .writing-area {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 1rem;
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    resize: vertical;
+    min-height: 120px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .writing-area:focus { border-color: var(--teal); }
+  .writing-area::placeholder { color: var(--gray); }
+  .check-btn {
+    background: linear-gradient(135deg, var(--green), var(--teal));
+    border: none;
+    border-radius: 12px;
+    padding: 0.9rem 2rem;
+    color: var(--primary);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    align-self: flex-start;
+  }
+  .check-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(6,214,160,0.3); }
+  .feedback-box {
+    border-radius: 12px;
+    padding: 1rem;
+    font-size: 0.95rem;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .feedback-box.good { background: rgba(6,214,160,0.15); border: 1px solid var(--green); color: var(--green); }
+  .feedback-box.try { background: rgba(255,209,102,0.15); border: 1px solid var(--yellow); color: var(--yellow); }
+
+  /* COMPLETE BTN */
+  .complete-section {
+    margin-top: 2rem;
+    text-align: center;
+  }
+  .complete-btn {
+    background: linear-gradient(135deg, var(--gold), #ff6b6b);
+    border: none;
+    border-radius: 16px;
+    padding: 1.1rem 3rem;
+    color: var(--white);
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.2rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 8px 25px rgba(233,69,96,0.3);
+  }
+  .complete-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(233,69,96,0.4); }
+
+  /* CONFETTI */
+  .confetti-container {
+    position: fixed; inset: 0; pointer-events: none; z-index: 9998; overflow: hidden;
+  }
+  .confetti-piece {
+    position: absolute;
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* TOOLTIP */
+  .tooltip {
+    position: fixed;
+    background: rgba(15,52,96,0.98);
+    border: 1px solid var(--teal);
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    z-index: 9997;
+    pointer-events: none;
+    max-width: 220px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    display: none;
+  }
+  .tooltip-en { font-weight: 800; color: var(--white); font-size: 1rem; }
+  .tooltip-uz { color: var(--teal); margin-top: 0.2rem; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: rgba(255,255,255,0.25);
+    font-size: 0.85rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    margin-top: 2rem;
+  }
+  footer span { color: var(--yellow); font-weight: 700; }
+
+  /* CONFETTI ALERT */
+  .success-msg {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, var(--accent), var(--secondary));
+    border: 2px solid var(--green);
+    border-radius: 20px;
+    padding: 2rem 3rem;
+    text-align: center;
+    z-index: 9999;
+    display: none;
+    animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes popIn { from { transform: translate(-50%,-50%) scale(0.5); } to { transform: translate(-50%,-50%) scale(1); } }
+  .success-msg h2 { font-family: 'Baloo 2', cursive; font-size: 2rem; color: var(--green); margin-bottom: 0.5rem; }
+  .success-msg p { color: var(--gray); margin-bottom: 1rem; }
+  .success-close {
+    background: var(--green);
+    border: none;
+    border-radius: 10px;
+    padding: 0.6rem 2rem;
+    color: var(--primary);
+    font-weight: 800;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+  }
+
+  @media(max-width:600px) {
+    .calendar-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 0.5rem; }
+    .vocab-grid { grid-template-columns: 1fr; }
+    header { flex-direction: column; gap: 0.7rem; }
+    .progress-bar-wrap { width: 100%; }
+    .lesson-title { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">🇺🇸 EnglishPro</div>
+  <div class="splash-sub">60 Kunlik Ingliz Tili Kursi</div>
+  <div class="splash-loader"><div class="splash-loader-bar"></div></div>
+  <div class="splash-powered">
+    Powered by <span>Abdulloh Bakirov</span><br>
+    <span>Abdullokh Bakirov</span> tomonidan yasaldi ✨
+  </div>
+</div>
+
+<!-- TOOLTIP -->
+<div class="tooltip" id="tooltip">
+  <div class="tooltip-en" id="tooltipEn"></div>
+  <div class="tooltip-uz" id="tooltipUz"></div>
+</div>
+
+<!-- SUCCESS MSG -->
+<div class="success-msg" id="successMsg">
+  <h2>🎉 Barakalla!</h2>
+  <p id="successText">Kun muvaffaqiyatli tugatildi!</p>
+  <button class="success-close" onclick="closeSuccess()">Davom etish →</button>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-text">🇺🇸 EnglishPro</div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="progress-text" id="progressText">0 / 60 kun</div>
+</header>
+
+<main>
+  <!-- HOME PAGE -->
+  <div id="homePage">
+    <div class="section-title">📅 60 Kunlik Dastur</div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+  </div>
+
+  <!-- LESSON PAGE -->
+  <div id="lessonPage">
+    <button class="back-btn" onclick="goHome()">← Orqaga</button>
+    <div class="lesson-header">
+      <div class="lesson-day" id="lessonDayLabel"></div>
+      <div class="lesson-title" id="lessonTitle"></div>
+      <div class="lesson-desc" id="lessonDesc"></div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('vocab', this)">📚 So'zlar</button>
+      <button class="tab-btn" onclick="switchTab('reading', this)">📖 O'qish</button>
+      <button class="tab-btn" onclick="switchTab('writing', this)">✏️ Yozish</button>
+    </div>
+    <div id="tabVocab"></div>
+    <div id="tabReading" style="display:none"></div>
+    <div id="tabWriting" style="display:none"></div>
+    <div class="complete-section">
+      <button class="complete-btn" onclick="completeDay()">✅ Kunni Tugatdim!</button>
+    </div>
+  </div>
+</main>
+
+<footer>
+  Powered by <span>Abdulloh Bakirov</span> · Abdullokh Bakirov tomonidan yasaldi 🚀<br>
+  <span>EnglishPro</span> — 60 Kunlik Ingliz Tili Kursi
+</footer>
+
+<div class="confetti-container" id="confettiContainer"></div>
+
+<script>
+// ============================================================
+// LESSON DATA - 60 days
+// ============================================================
+const lessonData = [
+  // WEEK 1 - Harflar va Tovushlar
+  { title: "Harflar (A-G)", desc: "Ingliz alifbosining birinchi qismi - A dan G gacha", topic: "alphabet",
+    vocab: [{e:"A - Apple",u:"Olma",em:"🍎",ex:"An apple a day"},{e:"B - Ball",u:"To'p",em:"⚽",ex:"A red ball"},{e:"C - Cat",u:"Mushuk",em:"🐱",ex:"My cat is cute"},{e:"D - Dog",u:"It",em:"🐶",ex:"A big dog"},{e:"E - Egg",u:"Tuxum",em:"🥚",ex:"Two eggs"},{e:"F - Fish",u:"Baliq",em:"🐟",ex:"A small fish"},{e:"G - Girl",u:"Qiz",em:"👧",ex:"A smart girl"}],
+    reading: "Hello! My name is Sara. I have a {cat} and a {dog}. My cat is small. My dog is big. I eat an {apple} every day. I like {fish} too.",
+    writing: { prompt: "O'zingiz haqida yozing: My name is ___", answer: "my name is" }
+  },
+  { title: "Harflar (H-N)", desc: "Alifboning ikkinchi qismi - H dan N gacha", topic: "alphabet",
+    vocab: [{e:"H - Hand",u:"Qo'l",em:"✋",ex:"Wash your hand"},{e:"I - Ice",u:"Muz",em:"🧊",ex:"Cold ice"},{e:"J - Juice",u:"Sharbat",em:"🧃",ex:"Orange juice"},{e:"K - Key",u:"Kalit",em:"🔑",ex:"A house key"},{e:"L - Lion",u:"Sher",em:"🦁",ex:"A big lion"},{e:"M - Moon",u:"Oy",em:"🌙",ex:"The moon is bright"},{e:"N - Nose",u:"Burun",em:"👃",ex:"A big nose"}],
+    reading: "I drink {juice} every morning. The {moon} is beautiful at night. I have a {key} to my house. A {lion} is a big animal.",
+    writing: { prompt: "Yozing: I drink ___ every morning. (juice yoki water)", answer: "i drink" }
+  },
+  { title: "Harflar (O-U)", desc: "Alifboning uchinchi qismi - O dan U gacha", topic: "alphabet",
+    vocab: [{e:"O - Orange",u:"Apelsin",em:"🍊",ex:"Sweet orange"},{e:"P - Pizza",u:"Pitsa",em:"🍕",ex:"I love pizza"},{e:"Q - Queen",u:"Qirolicha",em:"👑",ex:"The Queen of England"},{e:"R - Rain",u:"Yomg'ir",em:"🌧️",ex:"Heavy rain"},{e:"S - Sun",u:"Quyosh",em:"☀️",ex:"Bright sun"},{e:"T - Tree",u:"Daraxt",em:"🌳",ex:"A tall tree"},{e:"U - Umbrella",u:"Soyabon",em:"☂️",ex:"A red umbrella"}],
+    reading: "The {sun} shines every day. I eat an {orange} for breakfast. When it {rains}, I use my {umbrella}. The {tree} is very tall.",
+    writing: { prompt: "Yozing: The sun ___ every day. (shines)", answer: "the sun shines" }
+  },
+  { title: "Harflar (V-Z)", desc: "Alifboning oxirgi qismi - V dan Z gacha", topic: "alphabet",
+    vocab: [{e:"V - Van",u:"Furgoн",em:"🚐",ex:"A white van"},{e:"W - Water",u:"Suv",em:"💧",ex:"Clean water"},{e:"X - X-ray",u:"Rentgen",em:"🔬",ex:"An X-ray photo"},{e:"Y - Yellow",u:"Sariq",em:"🌻",ex:"Yellow flower"},{e:"Z - Zoo",u:"Hayvonot bog'i",em:"🦒",ex:"I like the zoo"}],
+    reading: "I drink {water} every day. My favorite color is {yellow}. I went to the {zoo} with my family. We saw animals there.",
+    writing: { prompt: "Sevimli ranginzi yozing: My favorite color is ___", answer: "my favorite color is" }
+  },
+  { title: "Unli Tovushlar", desc: "A, E, I, O, U - unli harflar talaffuzi", topic: "phonics",
+    vocab: [{e:"A = 'æ'",u:"cat, hat, map da",em:"🐱",ex:"The cat sat"},{e:"E = 'ɛ'",u:"bed, red, pet da",em:"🛏️",ex:"A red bed"},{e:"I = 'ɪ'",u:"sit, big, milk da",em:"🪑",ex:"Sit here"},{e:"O = 'ɒ'",u:"hot, dog, box da",em:"📦",ex:"A big box"},{e:"U = 'ʌ'",u:"bus, fun, cup da",em:"🚌",ex:"A red bus"}],
+    reading: "I sit on a {chair}. I have a {cup} of tea. The {bus} is red. It is very {hot} today. A {cat} is on the {bed}.",
+    writing: { prompt: "To'ldiring: The bus is ___. (red/blue/green)", answer: "the bus is" }
+  },
+  { title: "Undosh Tovushlar", desc: "B, C, D, F, G, H, J, K, L, M...", topic: "phonics",
+    vocab: [{e:"B = /b/",u:"ball, big, bed",em:"⚽",ex:"A big ball"},{e:"C = /k/",u:"cat, cup, car",em:"🚗",ex:"A red car"},{e:"D = /d/",u:"dog, day, door",em:"🚪",ex:"Open the door"},{e:"F = /f/",u:"fish, fun, for",em:"🐟",ex:"A big fish"},{e:"G = /g/",u:"girl, go, get",em:"🏃",ex:"Go fast"}],
+    reading: "Open the {door}. I see a {car}. The {dog} runs {fast}. A {girl} plays with a {ball}.",
+    writing: { prompt: "Yozing: Open the ___. (door)", answer: "open the door" }
+  },
+  { title: "Birinchi Hafta Takrori", desc: "1-6 kunlarni takrorlash va mustahkamlash", topic: "review",
+    vocab: [{e:"Repeat",u:"Takrorlash",em:"🔄",ex:"Let's repeat"},{e:"Practice",u:"Mashq qilish",em:"📝",ex:"Daily practice"},{e:"Learn",u:"O'rganish",em:"📚",ex:"I learn English"},{e:"Speak",u:"Gapirish",em:"🗣️",ex:"Speak English"},{e:"Listen",u:"Tinglash",em:"👂",ex:"Listen carefully"},{e:"Read",u:"O'qish",em:"📖",ex:"Read every day"},{e:"Write",u:"Yozish",em:"✏️",ex:"Write this word"}],
+    reading: "Every day I {learn} new words. I {practice} English every morning. I {listen} to music in English. I {read} books and I {write} in my notebook.",
+    writing: { prompt: "Yozing: Every day I learn ___ words. (new)", answer: "every day i learn" }
+  },
+
+  // WEEK 2 - Asosiy So'zlar
+  { title: "Salomlashish", desc: "Hello, Hi, Good morning, Goodbye...", topic: "greetings",
+    vocab: [{e:"Hello",u:"Salom",em:"👋",ex:"Hello, how are you?"},{e:"Hi",u:"Salom (norasmiy)",em:"😊",ex:"Hi! Nice to meet you"},{e:"Good morning",u:"Xayrli tong",em:"🌅",ex:"Good morning everyone"},{e:"Good evening",u:"Xayrli oqshom",em:"🌆",ex:"Good evening sir"},{e:"Goodbye",u:"Xayr",em:"👋",ex:"Goodbye! See you"},{e:"See you",u:"Ko'rishguncha",em:"🤝",ex:"See you tomorrow"},{e:"Thank you",u:"Rahmat",em:"🙏",ex:"Thank you very much"}],
+    reading: "Every morning I say '{Good morning}' to my family. When I meet a friend I say '{Hello}'. When I leave I say '{Goodbye}'. I always say '{Thank you}' when someone helps me.",
+    writing: { prompt: "Tonggi salomlashuvni yozing: Good ___ everyone!", answer: "good morning" }
+  },
+  { title: "Raqamlar 1-10", desc: "One, Two, Three... O'n gacha raqamlar", topic: "numbers",
+    vocab: [{e:"One - 1",u:"Bir",em:"1️⃣",ex:"One apple"},{e:"Two - 2",u:"Ikki",em:"2️⃣",ex:"Two cats"},{e:"Three - 3",u:"Uch",em:"3️⃣",ex:"Three dogs"},{e:"Four - 4",u:"To'rt",em:"4️⃣",ex:"Four books"},{e:"Five - 5",u:"Besh",em:"5️⃣",ex:"Five eggs"},{e:"Six - 6",u:"Olti",em:"6️⃣",ex:"Six chairs"},{e:"Seven - 7",u:"Yetti",em:"7️⃣",ex:"Seven days"},{e:"Eight - 8",u:"Sakkiz",em:"8️⃣",ex:"Eight hours"},{e:"Nine - 9",u:"To'qqiz",em:"9️⃣",ex:"Nine stars"},{e:"Ten - 10",u:"O'n",em:"🔟",ex:"Ten fingers"}],
+    reading: "I have {two} hands and {ten} fingers. There are {seven} days in a week. I sleep {eight} hours every night. I eat {three} meals a day.",
+    writing: { prompt: "Raqamlarni yozing: I have ___ fingers. (ten)", answer: "i have ten fingers" }
+  },
+  { title: "Ranglar", desc: "Red, Blue, Green, Yellow... Ranglar", topic: "colors",
+    vocab: [{e:"Red",u:"Qizil",em:"🔴",ex:"A red apple"},{e:"Blue",u:"Ko'k",em:"🔵",ex:"Blue sky"},{e:"Green",u:"Yashil",em:"🟢",ex:"Green tree"},{e:"Yellow",u:"Sariq",em:"🟡",ex:"Yellow sun"},{e:"White",u:"Oq",em:"⚪",ex:"White snow"},{e:"Black",u:"Qora",em:"⚫",ex:"Black night"},{e:"Orange",u:"To'q sariq",em:"🟠",ex:"Orange fruit"},{e:"Pink",u:"Pushti",em:"🩷",ex:"Pink flower"}],
+    reading: "The sky is {blue}. Grass is {green}. The sun is {yellow}. Roses are {red}. Snow is {white}. Night is {black}. I love all colors!",
+    writing: { prompt: "Yozing: The sky is ___. (blue)", answer: "the sky is blue" }
+  },
+  { title: "Oila A'zolari", desc: "Father, Mother, Brother, Sister...", topic: "family",
+    vocab: [{e:"Father",u:"Ota",em:"👨",ex:"My father works"},{e:"Mother",u:"Ona",em:"👩",ex:"My mother cooks"},{e:"Brother",u:"Aka/Uka",em:"👦",ex:"My brother plays"},{e:"Sister",u:"Opa/Singil",em:"👧",ex:"My sister reads"},{e:"Son",u:"O'g'il",em:"👶",ex:"My son is cute"},{e:"Daughter",u:"Qiz farzand",em:"👶",ex:"My daughter sings"},{e:"Grandfather",u:"Bobo",em:"👴",ex:"My grandfather is wise"},{e:"Grandmother",u:"Buvi",em:"👵",ex:"My grandmother cooks well"}],
+    reading: "I love my {family}. My {father} works hard. My {mother} cooks delicious food. My {brother} and {sister} play together. My {grandfather} tells good stories.",
+    writing: { prompt: "Oilangiz haqida yozing: My family has ___ people.", answer: "my family has" }
+  },
+  { title: "Tananing A'zolari", desc: "Head, Eyes, Nose, Mouth...", topic: "body",
+    vocab: [{e:"Head",u:"Bosh",em:"🗣️",ex:"My head hurts"},{e:"Eye",u:"Ko'z",em:"👁️",ex:"Brown eyes"},{e:"Nose",u:"Burun",em:"👃",ex:"A small nose"},{e:"Mouth",u:"Og'iz",em:"👄",ex:"Open your mouth"},{e:"Ear",u:"Quloq",em:"👂",ex:"Big ears"},{e:"Hand",u:"Qo'l",em:"✋",ex:"Clean hands"},{e:"Leg",u:"Oyoq",em:"🦵",ex:"Long legs"},{e:"Heart",u:"Yurak",em:"❤️",ex:"Healthy heart"}],
+    reading: "I have two {eyes} to see. I have two {ears} to hear. I have one {nose} to smell. I have one {mouth} to speak. I have two {hands} to work.",
+    writing: { prompt: "Yozing: I have two ___ to see. (eyes)", answer: "i have two eyes" }
+  },
+  { title: "Oziq-Ovqatlar", desc: "Rice, Bread, Meat, Vegetables...", topic: "food",
+    vocab: [{e:"Rice",u:"Guruch/Osh",em:"🍚",ex:"I eat rice"},{e:"Bread",u:"Non",em:"🍞",ex:"Fresh bread"},{e:"Meat",u:"Go'sht",em:"🥩",ex:"Grilled meat"},{e:"Egg",u:"Tuxum",em:"🥚",ex:"Fried egg"},{e:"Milk",u:"Sut",em:"🥛",ex:"Cold milk"},{e:"Apple",u:"Olma",em:"🍎",ex:"Red apple"},{e:"Water",u:"Suv",em:"💧",ex:"Clean water"},{e:"Tea",u:"Choy",em:"🍵",ex:"Hot tea"}],
+    reading: "Every morning I drink {tea} with {milk}. I eat {bread} and an {egg} for breakfast. For lunch I eat {rice} with {meat}. I drink {water} all day.",
+    writing: { prompt: "Nonushta haqida yozing: For breakfast I eat ___", answer: "for breakfast i eat" }
+  },
+  { title: "Ikkinchi Hafta Takrori", desc: "8-13 kunlar takrori", topic: "review",
+    vocab: [{e:"Family",u:"Oila",em:"👨‍👩‍👧‍👦",ex:"I love my family"},{e:"Food",u:"Ovqat",em:"🍽️",ex:"Delicious food"},{e:"Color",u:"Rang",em:"🎨",ex:"My favorite color"},{e:"Number",u:"Raqam",em:"🔢",ex:"Count the numbers"},{e:"Body",u:"Tana",em:"🧍",ex:"Healthy body"},{e:"Greet",u:"Salomlashmoq",em:"👋",ex:"Greet your friend"}],
+    reading: "Hello! My name is Ali. I am from Uzbekistan. I have a big {family}. We eat {food} together. My favorite {color} is blue. I count from one to {ten}.",
+    writing: { prompt: "O'zingiz haqida: My name is ___ and I am from ___", answer: "my name is" }
+  },
+
+  // WEEK 3 - Fe'llar va Gaplar
+  { title: "Asosiy Fe'llar", desc: "Go, Come, Eat, Drink, Sleep...", topic: "verbs",
+    vocab: [{e:"Go",u:"Bormoq",em:"🏃",ex:"I go to school"},{e:"Come",u:"Kelmoq",em:"🚶",ex:"Come here please"},{e:"Eat",u:"Yemoq",em:"🍽️",ex:"I eat rice"},{e:"Drink",u:"Ichmoq",em:"🥤",ex:"Drink water"},{e:"Sleep",u:"Uxlamoq",em:"😴",ex:"I sleep 8 hours"},{e:"Wake up",u:"Uyg'onmoq",em:"⏰",ex:"I wake up early"},{e:"Work",u:"Ishlamoq",em:"💼",ex:"I work hard"},{e:"Play",u:"O'ynamoq",em:"🎮",ex:"Children play"}],
+    reading: "Every day I {wake up} at 7 o'clock. I {eat} breakfast and {drink} tea. Then I {go} to work. I {work} all day. In the evening I {play} with my children. At 10 I {sleep}.",
+    writing: { prompt: "Kundalik rutinangiz: Every day I wake up at ___ o'clock", answer: "every day i wake up" }
+  },
+  { title: "Olmoshlar", desc: "I, You, He, She, We, They...", topic: "pronouns",
+    vocab: [{e:"I",u:"Men",em:"🙋",ex:"I am Ali"},{e:"You",u:"Sen/Siz",em:"👉",ex:"You are kind"},{e:"He",u:"U (erkak)",em:"👨",ex:"He is my brother"},{e:"She",u:"U (ayol)",em:"👩",ex:"She is my sister"},{e:"We",u:"Biz",em:"👥",ex:"We are friends"},{e:"They",u:"Ular",em:"👫",ex:"They are students"},{e:"It",u:"U (narsa)",em:"📦",ex:"It is a book"},{e:"My",u:"Mening",em:"✋",ex:"My name is Ali"}],
+    reading: "{I} am a student. {You} are my friend. {He} is my teacher. {She} is very kind. {We} study English together. {They} are from Uzbekistan. {It} is a beautiful day.",
+    writing: { prompt: "Yozing: ___ am a student. (I)", answer: "i am a student" }
+  },
+  { title: "'To Be' Fe'li", desc: "Am, Is, Are - bo'lmoq fe'li", topic: "grammar",
+    vocab: [{e:"I am",u:"Men ... man",em:"🙋",ex:"I am happy"},{e:"You are",u:"Sen/Siz ... san/siz",em:"👉",ex:"You are smart"},{e:"He is",u:"U ... (erkak)",em:"👨",ex:"He is tall"},{e:"She is",u:"U ... (ayol)",em:"👩",ex:"She is beautiful"},{e:"We are",u:"Biz ... miz",em:"👥",ex:"We are friends"},{e:"They are",u:"Ular ... lar",em:"👫",ex:"They are students"},{e:"It is",u:"Bu ...",em:"📦",ex:"It is cold today"}],
+    reading: "I {am} from Uzbekistan. You {are} my friend. He {is} a doctor. She {is} a teacher. We {are} classmates. They {are} good students. It {is} a nice day today.",
+    writing: { prompt: "To'ldiring: I ___ from Uzbekistan. (am)", answer: "i am from uzbekistan" }
+  },
+  { title: "Sonlar 11-100", desc: "Eleven, Twenty, Fifty, Hundred...", topic: "numbers",
+    vocab: [{e:"Eleven - 11",u:"O'n bir",em:"1️⃣1️⃣",ex:"Eleven students"},{e:"Twenty - 20",u:"Yigirma",em:"2️⃣0️⃣",ex:"Twenty years old"},{e:"Thirty - 30",u:"Ottiz",em:"3️⃣0️⃣",ex:"Thirty days"},{e:"Forty - 40",u:"Qirq",em:"4️⃣0️⃣",ex:"Forty minutes"},{e:"Fifty - 50",u:"Ellik",em:"5️⃣0️⃣",ex:"Fifty percent"},{e:"Hundred - 100",u:"Yuz",em:"💯",ex:"One hundred"}],
+    reading: "I am {twenty} years old. There are {thirty} students in my class. My grandfather is {seventy} years old. We study {sixty} days in this course.",
+    writing: { prompt: "Yoshingizni yozing: I am ___ years old.", answer: "i am" }
+  },
+  { title: "Kun Tartibi", desc: "Morning, Afternoon, Evening, Night...", topic: "time",
+    vocab: [{e:"Morning",u:"Tong",em:"🌅",ex:"Good morning"},{e:"Afternoon",u:"Tushdan keyin",em:"🌤️",ex:"Good afternoon"},{e:"Evening",u:"Kechqurun",em:"🌆",ex:"Good evening"},{e:"Night",u:"Tun",em:"🌙",ex:"Good night"},{e:"Today",u:"Bugun",em:"📅",ex:"Today is Monday"},{e:"Tomorrow",u:"Ertaga",em:"📅",ex:"See you tomorrow"},{e:"Yesterday",u:"Kecha",em:"📅",ex:"Yesterday was Sunday"}],
+    reading: "Every {morning} I wake up early. In the {afternoon} I study English. In the {evening} I watch TV. At {night} I sleep. {Today} I am learning new words. {Tomorrow} I will practice more.",
+    writing: { prompt: "Yozing: Every morning I wake up ___. (early)", answer: "every morning i wake up early" }
+  },
+  { title: "Hafta Kunlari", desc: "Monday, Tuesday... Sunday - hafta kunlari", topic: "days",
+    vocab: [{e:"Monday",u:"Dushanba",em:"1️⃣",ex:"Monday is the first day"},{e:"Tuesday",u:"Seshanba",em:"2️⃣",ex:"Tuesday is busy"},{e:"Wednesday",u:"Chorshanba",em:"3️⃣",ex:"Wednesday is midweek"},{e:"Thursday",u:"Payshanba",em:"4️⃣",ex:"Thursday almost weekend"},{e:"Friday",u:"Juma",em:"5️⃣",ex:"Happy Friday!"},{e:"Saturday",u:"Shanba",em:"6️⃣",ex:"Saturday is fun"},{e:"Sunday",u:"Yakshanba",em:"7️⃣",ex:"Rest on Sunday"}],
+    reading: "My week starts on {Monday}. On {Wednesday} I have English class. {Friday} is my favorite day. On {Saturday} and {Sunday} I rest and spend time with family.",
+    writing: { prompt: "Yozing: My favorite day is ___", answer: "my favorite day is" }
+  },
+  { title: "Oylar", desc: "January, February... December - oylar", topic: "months",
+    vocab: [{e:"January",u:"Yanvar",em:"❄️",ex:"Cold January"},{e:"February",u:"Fevral",em:"💝",ex:"Valentine's day"},{e:"March",u:"Mart",em:"🌸",ex:"Spring begins"},{e:"April",u:"Aprel",em:"🌧️",ex:"April showers"},{e:"May",u:"May",em:"🌺",ex:"Beautiful May"},{e:"June",u:"Iyun",em:"☀️",ex:"Hot June"},{e:"December",u:"Dekabr",em:"🎄",ex:"Merry Christmas"}],
+    reading: "My birthday is in {March}. The new year starts in {January}. Summer begins in {June}. December is very cold. I love the month of {May} because of the flowers.",
+    writing: { prompt: "Tug'ilgan oyingizni yozing: My birthday is in ___", answer: "my birthday is in" }
+  },
+
+  // WEEK 4 - Sifatlar va Tavsif
+  { title: "Sifatlar: Katta/Kichik", desc: "Big, Small, Tall, Short, Long...", topic: "adjectives",
+    vocab: [{e:"Big",u:"Katta",em:"🐘",ex:"A big elephant"},{e:"Small",u:"Kichik",em:"🐭",ex:"A small mouse"},{e:"Tall",u:"Baland/Uzun bo'yli",em:"🏢",ex:"A tall building"},{e:"Short",u:"Past/Qisqa",em:"🌱",ex:"A short tree"},{e:"Long",u:"Uzun",em:"📏",ex:"A long road"},{e:"Wide",u:"Keng",em:"🌊",ex:"A wide ocean"},{e:"Thin",u:"Ingichka",em:"📝",ex:"A thin book"}],
+    reading: "The elephant is {big}. The mouse is {small}. The building is {tall}. The grass is {short}. The road is {long}. The ocean is {wide}.",
+    writing: { prompt: "Biror narsani tasvirlab yozing: The ___ is big/small", answer: "the" }
+  },
+  { title: "Sifatlar: Yaxshi/Yomon", desc: "Good, Bad, Happy, Sad, Hot, Cold...", topic: "adjectives",
+    vocab: [{e:"Good",u:"Yaxshi",em:"👍",ex:"A good student"},{e:"Bad",u:"Yomon",em:"👎",ex:"Bad weather"},{e:"Happy",u:"Xursand",em:"😊",ex:"I am happy"},{e:"Sad",u:"Xafa",em:"😢",ex:"Don't be sad"},{e:"Hot",u:"Issiq",em:"🔥",ex:"Hot summer"},{e:"Cold",u:"Sovuq",em:"❄️",ex:"Cold winter"},{e:"Beautiful",u:"Chiroyli",em:"💐",ex:"Beautiful flowers"}],
+    reading: "Today is a {good} day. The weather is {hot}. I am very {happy} because I am learning English. The flowers are {beautiful}. Don't be {sad}, be {happy}!",
+    writing: { prompt: "Hissiyotingizni yozing: Today I am ___ (happy/sad)", answer: "today i am" }
+  },
+  { title: "Menda Bor/Yo'q", desc: "I have, I don't have - egalik bildirish", topic: "possession",
+    vocab: [{e:"I have",u:"Menda bor",em:"✅",ex:"I have a book"},{e:"I don't have",u:"Menda yo'q",em:"❌",ex:"I don't have a car"},{e:"Do you have?",u:"Senda bormi?",em:"❓",ex:"Do you have a pen?"},{e:"Yes, I have",u:"Ha, menda bor",em:"✔️",ex:"Yes, I have it"},{e:"No, I don't",u:"Yo'q, menda yo'q",em:"✖️",ex:"No, I don't have"}],
+    reading: "I {have} a phone. I {have} a book. But I {don't have} a car. {Do you have} a pen? Yes, I have a pen. Do you have money? No, I {don't have} money right now.",
+    writing: { prompt: "Yozing: I have a ___ (phone/book/house)", answer: "i have a" }
+  },
+  { title: "Qayerda? - Joylar", desc: "In, On, Under, Next to - joy bildiruvchi so'zlar", topic: "prepositions",
+    vocab: [{e:"In",u:"Ichida",em:"📦",ex:"In the box"},{e:"On",u:"Ustida",em:"📚",ex:"On the table"},{e:"Under",u:"Ostida",em:"🪑",ex:"Under the chair"},{e:"Next to",u:"Yonida",em:"👫",ex:"Next to me"},{e:"In front of",u:"Oldida",em:"🏠",ex:"In front of the house"},{e:"Behind",u:"Orqasida",em:"🌲",ex:"Behind the tree"},{e:"Between",u:"O'rtasida",em:"↔️",ex:"Between two trees"}],
+    reading: "My book is {on} the table. My bag is {under} the chair. My pen is {in} my bag. My school is {next to} my house. The park is {in front of} the school.",
+    writing: { prompt: "Yozing: My book is ___ the table. (on)", answer: "my book is on the table" }
+  },
+  { title: "Savol Berish", desc: "What, Where, When, Who, Why, How...", topic: "questions",
+    vocab: [{e:"What",u:"Nima",em:"❓",ex:"What is this?"},{e:"Where",u:"Qayerda",em:"📍",ex:"Where are you?"},{e:"When",u:"Qachon",em:"⏰",ex:"When is your birthday?"},{e:"Who",u:"Kim",em:"👤",ex:"Who is he?"},{e:"Why",u:"Nima uchun",em:"🤔",ex:"Why are you late?"},{e:"How",u:"Qanday",em:"💭",ex:"How are you?"},{e:"How many",u:"Nechta",em:"🔢",ex:"How many books?"}],
+    reading: "{What} is your name? {Where} are you from? {When} is your birthday? {Who} is your teacher? {Why} do you study English? {How} are you today? I am fine, thank you!",
+    writing: { prompt: "Savol yozing: ___ are you from? (Where)", answer: "where are you from" }
+  },
+  { title: "Kasb-Hunar", desc: "Doctor, Teacher, Student, Engineer...", topic: "jobs",
+    vocab: [{e:"Doctor",u:"Shifokor",em:"👨‍⚕️",ex:"My doctor is kind"},{e:"Teacher",u:"O'qituvchi",em:"👨‍🏫",ex:"My teacher is smart"},{e:"Student",u:"O'quvchi",em:"👨‍🎓",ex:"I am a student"},{e:"Engineer",u:"Muhandis",em:"👷",ex:"An engineer builds"},{e:"Cook",u:"Oshpaz",em:"👨‍🍳",ex:"A good cook"},{e:"Driver",u:"Haydovchi",em:"🚗",ex:"A bus driver"},{e:"Farmer",u:"Dehqon",em:"👨‍🌾",ex:"A hardworking farmer"}],
+    reading: "My father is an {engineer}. My mother is a {teacher}. I am a {student}. My uncle is a {doctor}. My neighbor is a {cook}. Everyone has a different job.",
+    writing: { prompt: "Kasbingiz haqida yozing: I am a ___", answer: "i am a" }
+  },
+  { title: "To'rtinchi Hafta Takrori", desc: "22-27 kunlar takrori", topic: "review",
+    vocab: [{e:"Review",u:"Takrorlash",em:"🔄",ex:"Time to review"},{e:"Practice",u:"Mashq",em:"💪",ex:"Practice makes perfect"},{e:"Remember",u:"Eslab qolish",em:"🧠",ex:"Remember this word"},{e:"Vocabulary",u:"Lug'at",em:"📚",ex:"New vocabulary"},{e:"Grammar",u:"Grammatika",em:"📝",ex:"English grammar"},{e:"Speaking",u:"Gapirish",em:"🗣️",ex:"Speaking practice"}],
+    reading: "I {remember} all the words I learned. I {practice} every day. My {vocabulary} is growing. My {grammar} is getting better. I can {speak} simple English now. I am proud of myself!",
+    writing: { prompt: "Yozing nima o'rgandingiz: I learned ___ this week.", answer: "i learned" }
+  },
+
+  // WEEK 5 - Kundalik Hayot
+  { title: "Uy va Xonalar", desc: "House, Room, Kitchen, Bedroom...", topic: "home",
+    vocab: [{e:"House",u:"Uy",em:"🏠",ex:"My house is big"},{e:"Room",u:"Xona",em:"🚪",ex:"My room is clean"},{e:"Kitchen",u:"Oshxona",em:"🍳",ex:"Cook in the kitchen"},{e:"Bedroom",u:"Yotoqxona",em:"🛏️",ex:"Sleep in bedroom"},{e:"Bathroom",u:"Hammom",em:"🚿",ex:"Wash in bathroom"},{e:"Garden",u:"Bog'",em:"🌺",ex:"Beautiful garden"},{e:"Door",u:"Eshik",em:"🚪",ex:"Open the door"},{e:"Window",u:"Deraza",em:"🪟",ex:"Look through window"}],
+    reading: "I live in a {house}. It has four {rooms}. I cook in the {kitchen}. I sleep in my {bedroom}. I wash in the {bathroom}. I have a beautiful {garden}.",
+    writing: { prompt: "Yozing: My house has ___ rooms.", answer: "my house has" }
+  },
+  { title: "Transport", desc: "Car, Bus, Train, Plane, Bicycle...", topic: "transport",
+    vocab: [{e:"Car",u:"Mashina",em:"🚗",ex:"A fast car"},{e:"Bus",u:"Avtobus",em:"🚌",ex:"Take the bus"},{e:"Train",u:"Poyezd",em:"🚂",ex:"Train is fast"},{e:"Airplane",u:"Samolyot",em:"✈️",ex:"Fly by airplane"},{e:"Bicycle",u:"Velosiped",em:"🚲",ex:"Ride a bicycle"},{e:"Taxi",u:"Taksi",em:"🚕",ex:"Take a taxi"},{e:"Boat",u:"Qayiq",em:"⛵",ex:"Ride a boat"}],
+    reading: "I go to work by {bus}. My father has a {car}. My brother rides a {bicycle}. When I travel far I take a {train} or {airplane}. In the city I use a {taxi}.",
+    writing: { prompt: "Yozing: I go to school by ___", answer: "i go to school by" }
+  },
+  { title: "Sport va Hobbi", desc: "Football, Swimming, Reading, Music...", topic: "hobbies",
+    vocab: [{e:"Football",u:"Futbol",em:"⚽",ex:"Play football"},{e:"Swimming",u:"Suzish",em:"🏊",ex:"I love swimming"},{e:"Reading",u:"Kitob o'qish",em:"📚",ex:"Reading is fun"},{e:"Music",u:"Musiqa",em:"🎵",ex:"I love music"},{e:"Cooking",u:"Pishirish",em:"🍳",ex:"Cooking is art"},{e:"Drawing",u:"Rasm chizish",em:"🎨",ex:"Draw a picture"},{e:"Dancing",u:"Raqsga tushish",em:"💃",ex:"I love dancing"}],
+    reading: "My hobby is {reading} books. I also like {music}. On weekends I play {football} with friends. My sister loves {dancing}. My brother likes {drawing}. What is your hobby?",
+    writing: { prompt: "Hobbingiz haqida: My hobby is ___", answer: "my hobby is" }
+  },
+  { title: "Ob-Havo", desc: "Sunny, Rainy, Windy, Cloudy, Snowy...", topic: "weather",
+    vocab: [{e:"Sunny",u:"Quyoshli",em:"☀️",ex:"It is sunny today"},{e:"Rainy",u:"Yomg'irli",em:"🌧️",ex:"A rainy day"},{e:"Windy",u:"Shamollik",em:"💨",ex:"It is windy"},{e:"Cloudy",u:"Bulutli",em:"☁️",ex:"A cloudy sky"},{e:"Hot",u:"Issiq",em:"🌡️",ex:"Very hot weather"},{e:"Cold",u:"Sovuq",em:"❄️",ex:"Cold winter day"},{e:"Snowy",u:"Qorli",em:"⛄",ex:"Snowy mountains"}],
+    reading: "Today is {sunny} and warm. Yesterday was {rainy} and {windy}. In winter it is very {cold} and sometimes {snowy}. In summer it is {hot}. I like {sunny} weather the most.",
+    writing: { prompt: "Bugungi ob-havo haqida: Today is ___", answer: "today is" }
+  },
+  { title: "Maktab va Ta'lim", desc: "School, Class, Book, Pencil, Teacher...", topic: "school",
+    vocab: [{e:"School",u:"Maktab",em:"🏫",ex:"I go to school"},{e:"Class",u:"Sinf",em:"📚",ex:"English class"},{e:"Book",u:"Kitob",em:"📖",ex:"A good book"},{e:"Pencil",u:"Qalam",em:"✏️",ex:"Write with pencil"},{e:"Bag",u:"Sumka",em:"🎒",ex:"School bag"},{e:"Homework",u:"Uy vazifasi",em:"📝",ex:"Do homework"},{e:"Test",u:"Imtihon",em:"📋",ex:"Pass the test"}],
+    reading: "Every day I go to {school}. I carry my {bag} with {books} and {pencils}. In {class} I listen to the {teacher}. After school I do my {homework}. I study for the {test}.",
+    writing: { prompt: "Yozing: Every day I go to ___", answer: "every day i go to school" }
+  },
+  { title: "Do'kon va Xarid", desc: "Shop, Buy, Price, Money, Expensive...", topic: "shopping",
+    vocab: [{e:"Shop",u:"Do'kon",em:"🏪",ex:"Go to the shop"},{e:"Buy",u:"Sotib olmoq",em:"🛒",ex:"Buy a book"},{e:"Price",u:"Narx",em:"💰",ex:"What is the price?"},{e:"Money",u:"Pul",em:"💵",ex:"I need money"},{e:"Expensive",u:"Qimmat",em:"💸",ex:"Too expensive"},{e:"Cheap",u:"Arzon",em:"🏷️",ex:"Very cheap"},{e:"Market",u:"Bozor",em:"🛍️",ex:"Go to market"}],
+    reading: "I go to the {shop} every week. I {buy} food and other things. I always check the {price}. Sometimes things are {expensive} and I look for {cheap} options. I pay with {money}.",
+    writing: { prompt: "Yozing: I go to the shop to buy ___", answer: "i go to the shop to buy" }
+  },
+  { title: "Beshinchi Hafta Takrori", desc: "29-34 kunlar takrori", topic: "review",
+    vocab: [{e:"Home",u:"Uy",em:"🏠",ex:"I love my home"},{e:"Travel",u:"Sayohat",em:"✈️",ex:"I love to travel"},{e:"Hobby",u:"Hobbi",em:"🎨",ex:"My hobby is reading"},{e:"Weather",u:"Ob-havo",em:"🌤️",ex:"Nice weather"},{e:"School",u:"Maktab",em:"🏫",ex:"I study at school"},{e:"Shopping",u:"Xarid",em:"🛍️",ex:"Go shopping"}],
+    reading: "My {home} is warm and nice. On weekends I like to go {shopping} at the {market}. When the {weather} is good I ride my bicycle as a {hobby}. I go to {school} and study hard.",
+    writing: { prompt: "Hafta davomida nima qildingiz: This week I ___", answer: "this week i" }
+  },
+
+  // WEEK 6 - Sog'liq va Tanasof
+  { title: "Sog'liq va Kasallik", desc: "Healthy, Sick, Doctor, Hospital...", topic: "health",
+    vocab: [{e:"Healthy",u:"Sog'lom",em:"💪",ex:"Stay healthy"},{e:"Sick",u:"Kasal",em:"🤒",ex:"I am sick"},{e:"Doctor",u:"Shifokor",em:"👨‍⚕️",ex:"See the doctor"},{e:"Hospital",u:"Kasalxona",em:"🏥",ex:"Go to hospital"},{e:"Medicine",u:"Dori",em:"💊",ex:"Take medicine"},{e:"Pain",u:"Og'riq",em:"😣",ex:"I have pain"},{e:"Rest",u:"Dam olish",em:"😴",ex:"I need rest"}],
+    reading: "It is important to stay {healthy}. When I am {sick} I go to the {doctor}. Sometimes I need to go to {hospital}. The doctor gives me {medicine}. I take rest and I get better.",
+    writing: { prompt: "Yozing: When I am sick I go to the ___", answer: "when i am sick i go to the doctor" }
+  },
+  { title: "Hissiyotlar", desc: "Happy, Sad, Angry, Surprised, Afraid...", topic: "emotions",
+    vocab: [{e:"Happy",u:"Xursand",em:"😊",ex:"I am happy"},{e:"Sad",u:"Xafa",em:"😢",ex:"Don't be sad"},{e:"Angry",u:"G'azablangan",em:"😠",ex:"I am angry"},{e:"Surprised",u:"Hayron",em:"😲",ex:"I am surprised"},{e:"Afraid",u:"Qo'rqinchli",em:"😨",ex:"I am afraid"},{e:"Tired",u:"Charchagan",em:"😩",ex:"I am tired"},{e:"Excited",u:"Hayajonlangan",em:"🤩",ex:"I am excited"}],
+    reading: "Today I feel very {happy} because I am learning English. Sometimes I feel {tired} after studying hard. When I make mistakes I feel {sad}. But then I try again and feel {excited}!",
+    writing: { prompt: "Hozir qanday his qilyapsiz: Right now I feel ___", answer: "right now i feel" }
+  },
+  { title: "Ovqat Pishirish", desc: "Cook, Boil, Fry, Mix, Add...", topic: "cooking",
+    vocab: [{e:"Cook",u:"Pishirmoq",em:"👨‍🍳",ex:"Cook dinner"},{e:"Boil",u:"Qaynamoq",em:"🍲",ex:"Boil water"},{e:"Fry",u:"Qovurmoq",em:"🍳",ex:"Fry an egg"},{e:"Mix",u:"Aralashtirmoq",em:"🥄",ex:"Mix well"},{e:"Add",u:"Qo'shmoq",em:"➕",ex:"Add salt"},{e:"Cut",u:"Kesmoq",em:"🔪",ex:"Cut vegetables"},{e:"Wash",u:"Yumoq",em:"🚿",ex:"Wash vegetables"}],
+    reading: "Today I will {cook} lunch. First I {wash} the vegetables. Then I {cut} them. I {boil} water and {add} the vegetables. I {fry} the meat in a pan. Then I {mix} everything together.",
+    writing: { prompt: "Retsept yozing: First, ___ the vegetables.", answer: "first wash the vegetables" }
+  },
+  { title: "Telefon va Internet", desc: "Phone, Call, Message, Internet, App...", topic: "technology",
+    vocab: [{e:"Phone",u:"Telefon",em:"📱",ex:"My phone is new"},{e:"Call",u:"Qo'ng'iroq qilmoq",em:"📞",ex:"I call my friend"},{e:"Message",u:"Xabar",em:"💬",ex:"Send a message"},{e:"Internet",u:"Internet",em:"🌐",ex:"Use the internet"},{e:"App",u:"Ilova",em:"📲",ex:"Download an app"},{e:"Email",u:"Elektron pochta",em:"📧",ex:"Send an email"},{e:"Password",u:"Parol",em:"🔐",ex:"Strong password"}],
+    reading: "I use my {phone} every day. I {call} my mother and {send} her a {message}. I use the {internet} to learn English. I download {apps} to practice. I check my {email} every morning.",
+    writing: { prompt: "Texnologiya haqida: I use my phone to ___", answer: "i use my phone to" }
+  },
+  { title: "Sayohat", desc: "Travel, Hotel, Airport, Ticket, Visa...", topic: "travel",
+    vocab: [{e:"Travel",u:"Sayohat qilmoq",em:"✈️",ex:"I love to travel"},{e:"Hotel",u:"Mehmonxona",em:"🏨",ex:"Stay at hotel"},{e:"Airport",u:"Aeroport",em:"🛫",ex:"Go to airport"},{e:"Ticket",u:"Chipta",em:"🎫",ex:"Buy a ticket"},{e:"Passport",u:"Pasport",em:"📕",ex:"Show your passport"},{e:"Suitcase",u:"Chemodan",em:"🧳",ex:"Pack your suitcase"},{e:"Map",u:"Xarita",em:"🗺️",ex:"Look at the map"}],
+    reading: "I want to {travel} to England. First I need a {passport} and a {visa}. I will buy a {ticket} at the {airport}. I will stay in a {hotel}. I will use a {map} to see the city.",
+    writing: { prompt: "Sayohat haqida: I want to travel to ___", answer: "i want to travel to" }
+  },
+  { title: "Tabiat va Muhit", desc: "Nature, Mountain, River, Forest, Sea...", topic: "nature",
+    vocab: [{e:"Nature",u:"Tabiat",em:"🌿",ex:"I love nature"},{e:"Mountain",u:"Tog'",em:"⛰️",ex:"High mountain"},{e:"River",u:"Daryo",em:"🌊",ex:"Clean river"},{e:"Forest",u:"O'rmon",em:"🌲",ex:"Green forest"},{e:"Sea",u:"Dengiz",em:"🌊",ex:"Blue sea"},{e:"Flower",u:"Gul",em:"🌸",ex:"Beautiful flower"},{e:"Animal",u:"Hayvon",em:"🐾",ex:"Wild animals"}],
+    reading: "Uzbekistan has beautiful {nature}. We have high {mountains} and long {rivers}. There are green {forests} and colorful {flowers}. Many {animals} live in nature. We must protect our nature.",
+    writing: { prompt: "Tabiat haqida: My country has beautiful ___", answer: "my country has beautiful" }
+  },
+  { title: "Oltinchi Hafta Takrori", desc: "36-41 kunlar takrori", topic: "review",
+    vocab: [{e:"Health",u:"Sog'liq",em:"❤️",ex:"Good health"},{e:"Emotions",u:"Hissiyotlar",em:"😊",ex:"Happy emotions"},{e:"Technology",u:"Texnologiya",em:"📱",ex:"New technology"},{e:"Travel",u:"Sayohat",em:"✈️",ex:"Love to travel"},{e:"Nature",u:"Tabiat",em:"🌿",ex:"Beautiful nature"}],
+    reading: "I am {healthy} and {happy}. I use {technology} to learn English. I want to {travel} and see beautiful {nature} around the world. Every day I learn something new!",
+    writing: { prompt: "Orzu haqida: My dream is to travel to ___", answer: "my dream is to travel to" }
+  },
+
+  // WEEK 7 - Murakkab Gaplar
+  { title: "Hozirgi Zamon", desc: "I am eating, He is sleeping - hozir bo'layotgan ishlar", topic: "present_continuous",
+    vocab: [{e:"I am eating",u:"Men yeyapman",em:"🍽️",ex:"I am eating rice"},{e:"He is reading",u:"U o'qiyapti",em:"📖",ex:"He is reading a book"},{e:"She is cooking",u:"U pishiryapti",em:"👩‍🍳",ex:"She is cooking dinner"},{e:"We are studying",u:"Biz o'qiyapmiz",em:"📚",ex:"We are studying English"},{e:"They are playing",u:"Ular o'ynayapti",em:"⚽",ex:"They are playing football"},{e:"It is raining",u:"Yomg'ir yog'yapti",em:"🌧️",ex:"It is raining now"}],
+    reading: "Right now I {am studying} English. My mother {is cooking} in the kitchen. My brother {is playing} football outside. {It is raining} today. My sister {is reading} a book in her room.",
+    writing: { prompt: "Hozir nima qilyapsiz: Right now I am ___ing", answer: "right now i am" }
+  },
+  { title: "O'tgan Zamon", desc: "I went, I ate, I slept - kechagi ishlar", topic: "past_tense",
+    vocab: [{e:"Went",u:"Bordim",em:"🏃",ex:"I went to school"},{e:"Ate",u:"Yedim",em:"🍽️",ex:"I ate rice"},{e:"Slept",u:"Uxladim",em:"😴",ex:"I slept well"},{e:"Saw",u:"Ko'rdim",em:"👀",ex:"I saw a movie"},{e:"Said",u:"Dedim",em:"💬",ex:"I said hello"},{e:"Made",u:"Qildim",em:"🔨",ex:"I made tea"},{e:"Came",u:"Keldim",em:"🚶",ex:"I came home"}],
+    reading: "Yesterday I {went} to school early. I {ate} breakfast at home. I {saw} my friends at school. We {made} a project together. In the evening I {came} home and {slept} early.",
+    writing: { prompt: "Kecha nima qildingiz: Yesterday I went to ___", answer: "yesterday i went to" }
+  },
+  { title: "Kelasi Zamon", desc: "I will go, I will eat - kelajak rejalar", topic: "future_tense",
+    vocab: [{e:"I will go",u:"Boraman",em:"🏃",ex:"I will go tomorrow"},{e:"I will eat",u:"Yeyaman",em:"🍽️",ex:"I will eat lunch"},{e:"I will study",u:"O'qiyman",em:"📚",ex:"I will study hard"},{e:"I will travel",u:"Sayohat qilaman",em:"✈️",ex:"I will travel soon"},{e:"I will work",u:"Ishlayman",em:"💼",ex:"I will work hard"},{e:"I want to",u:"Xohlayman",em:"💭",ex:"I want to learn"},{e:"I plan to",u:"Rejalashtiraman",em:"📅",ex:"I plan to study"}],
+    reading: "Tomorrow I {will wake up} early. I {will study} English for 2 hours. Then I {will go} to work. In the evening I {will watch} an English movie. Next month I {will travel} to a new city.",
+    writing: { prompt: "Ertaga nima qilasiz: Tomorrow I will ___", answer: "tomorrow i will" }
+  },
+  { title: "Bog'lovchilar", desc: "And, But, Or, Because, So...", topic: "conjunctions",
+    vocab: [{e:"And",u:"Va",em:"➕",ex:"I eat and drink"},{e:"But",u:"Lekin/Ammo",em:"↔️",ex:"I am tired but I study"},{e:"Or",u:"Yoki",em:"⚖️",ex:"Tea or coffee?"},{e:"Because",u:"Chunki",em:"❓",ex:"I study because I want to learn"},{e:"So",u:"Shuning uchun",em:"➡️",ex:"It rains so I take umbrella"},{e:"Although",u:"Garchi...bo'lsa ham",em:"🔄",ex:"Although tired I work"}],
+    reading: "I study English every day {because} I want to speak well. I am tired {but} I continue studying. I wake up early {and} study for one hour. {Although} it is hard, I enjoy learning!",
+    writing: { prompt: "Yozing: I study English because ___", answer: "i study english because" }
+  },
+  { title: "Modal Fe'llar", desc: "Can, Could, Should, Must, May...", topic: "modals",
+    vocab: [{e:"Can",u:"Qila olaman",em:"💪",ex:"I can speak English"},{e:"Can't",u:"Qila olmayman",em:"❌",ex:"I can't fly"},{e:"Should",u:"Kerak",em:"✅",ex:"You should study"},{e:"Must",u:"Shart/Kerak",em:"⚠️",ex:"I must go now"},{e:"May",u:"Mumkin",em:"❓",ex:"May I come in?"},{e:"Would like",u:"Xohlardim",em:"🙏",ex:"I would like tea"}],
+    reading: "I {can} speak English a little. I {can't} speak fluently yet, but I am learning. You {should} practice every day. I {must} finish my homework. {May} I ask a question?",
+    writing: { prompt: "Yozing: I can ___ in English. (speak/write/read)", answer: "i can" }
+  },
+  { title: "Taqqoslash", desc: "Bigger, Smaller, Better, Best...", topic: "comparison",
+    vocab: [{e:"Bigger",u:"Kattaroq",em:"⬆️",ex:"My house is bigger"},{e:"Smaller",u:"Kichikroq",em:"⬇️",ex:"This is smaller"},{e:"Better",u:"Yaxshiroq",em:"👍",ex:"This is better"},{e:"Worse",u:"Yomonroq",em:"👎",ex:"This is worse"},{e:"The best",u:"Eng yaxshi",em:"🥇",ex:"The best student"},{e:"More",u:"Ko'proq",em:"➕",ex:"I need more time"},{e:"Less",u:"Kamroq",em:"➖",ex:"Use less sugar"}],
+    reading: "Uzbekistan is {bigger} than many countries. English is {better} than I thought. My English today is {better} than yesterday. I want to become {the best} English speaker. Every day I get {better}!",
+    writing: { prompt: "Taqqoslang: My English today is ___ than yesterday. (better)", answer: "my english today is better than yesterday" }
+  },
+  { title: "Ettinchi Hafta Takrori", desc: "43-48 kunlar takrori", topic: "review",
+    vocab: [{e:"Grammar",u:"Grammatika",em:"📝",ex:"Good grammar"},{e:"Tense",u:"Zamon",em:"⏰",ex:"Past tense"},{e:"Sentence",u:"Gap",em:"💬",ex:"Write a sentence"},{e:"Modal",u:"Modal fe'l",em:"💪",ex:"Can, should, must"},{e:"Compare",u:"Taqqoslamoq",em:"⚖️",ex:"Compare two things"}],
+    reading: "I now know the {past}, present, and future {tenses}. I can write good {sentences}. I use {modals} like can, should, and must. I can {compare} things in English. My grammar is getting better!",
+    writing: { prompt: "Grammatika haqida: Now I can write ___ sentences.", answer: "now i can write" }
+  },
+
+  // WEEK 8 - Amaliy Ingliz Tili
+  { title: "Restoran va Cafe", desc: "Order food, Ask for bill, Menu...", topic: "restaurant",
+    vocab: [{e:"Menu",u:"Menyu",em:"📋",ex:"Can I see the menu?"},{e:"Order",u:"Buyurtma bermoq",em:"🍽️",ex:"I want to order"},{e:"Bill",u:"Hisob",em:"💰",ex:"Check please"},{e:"Table",u:"Stol",em:"🪑",ex:"A table for two"},{e:"Waiter",u:"Ofitsiant",em:"🧑‍🍳",ex:"Call the waiter"},{e:"Delicious",u:"Mazali",em:"😋",ex:"Very delicious!"},{e:"Recommend",u:"Tavsiya etmoq",em:"👌",ex:"What do you recommend?"}],
+    reading: "In a {restaurant}: '{Waiter}!' - Yes sir? 'Can I see the {menu}?' - Of course. 'I would like to {order} the pasta.' - Good choice! 'It is very {delicious}. Can I have the {bill}?' - Here you go!",
+    writing: { prompt: "Restorandagi dialog: Can I have the ___ please? (menu/bill)", answer: "can i have the" }
+  },
+  { title: "Yo'l So'rash", desc: "How to ask for directions in English", topic: "directions",
+    vocab: [{e:"Excuse me",u:"Kechirasiz",em:"🙋",ex:"Excuse me, where is...?"},{e:"Turn left",u:"Chapga buring",em:"⬅️",ex:"Turn left here"},{e:"Turn right",u:"O'ngga buring",em:"➡️",ex:"Turn right there"},{e:"Go straight",u:"To'g'ri boring",em:"⬆️",ex:"Go straight ahead"},{e:"Near",u:"Yaqin",em:"📍",ex:"Very near"},{e:"Far",u:"Uzoq",em:"🗺️",ex:"Too far"},{e:"Corner",u:"Burchak",em:"📐",ex:"On the corner"}],
+    reading: "'Excuse me! Where is the {hotel}?' 'Go {straight} on this road. Then {turn right}. The hotel is on the {corner}.' 'Is it {far}?' 'No, it is very {near}. Just 5 minutes walk.'",
+    writing: { prompt: "Yo'l so'rang: Excuse me, where is the ___?", answer: "excuse me where is the" }
+  },
+  { title: "Mehmonxona", desc: "Hotel - Check in, Check out, Room...", topic: "hotel",
+    vocab: [{e:"Check in",u:"Ro'yxatga olish",em:"🏨",ex:"Check in time"},{e:"Check out",u:"Chiqish",em:"🚪",ex:"Check out time"},{e:"Reservation",u:"Bron",em:"📋",ex:"I have a reservation"},{e:"Key card",u:"Kalit karta",em:"💳",ex:"Here is your key card"},{e:"Floor",u:"Qavat",em:"🏢",ex:"Third floor"},{e:"Elevator",u:"Lift",em:"⬆️",ex:"Use the elevator"},{e:"Breakfast",u:"Nonushta",em:"🍳",ex:"Breakfast included"}],
+    reading: "'Good morning! I have a {reservation}. My name is Ali.' 'Welcome! Please {check in} here. Here is your {key card}. Your room is on the third {floor}. Use the {elevator}. {Breakfast} is from 7 to 10 AM.'",
+    writing: { prompt: "Yozing: I have a reservation for ___ nights.", answer: "i have a reservation" }
+  },
+  { title: "Bank va Pul", desc: "Bank, Money, Pay, Transfer, Account...", topic: "banking",
+    vocab: [{e:"Bank",u:"Bank",em:"🏦",ex:"Go to the bank"},{e:"Money",u:"Pul",em:"💵",ex:"I need money"},{e:"Pay",u:"To'lamoq",em:"💳",ex:"Pay by card"},{e:"Transfer",u:"O'tkazmoq",em:"📲",ex:"Transfer money"},{e:"Account",u:"Hisob",em:"📊",ex:"Bank account"},{e:"Withdraw",u:"Pul olmoq",em:"🏧",ex:"Withdraw cash"},{e:"Save",u:"Tejash",em:"🐷",ex:"Save money"}],
+    reading: "I have a {bank} {account}. Every month I {save} some money. When I need {cash} I go to the ATM and {withdraw} money. I {pay} my bills online by {transfer}. I am good at saving money!",
+    writing: { prompt: "Pul haqida: I save money every ___", answer: "i save money every" }
+  },
+  { title: "Ish Intervyu", desc: "Job Interview - Tell me about yourself...", topic: "interview",
+    vocab: [{e:"Interview",u:"Intervyu",em:"🎤",ex:"Job interview"},{e:"Experience",u:"Tajriba",em:"📋",ex:"Work experience"},{e:"Skill",u:"Ko'nikma",em:"💪",ex:"New skill"},{e:"Salary",u:"Maosh",em:"💰",ex:"Good salary"},{e:"Team",u:"Jamoa",em:"👥",ex:"Good team"},{e:"Position",u:"Lavozim",em:"💼",ex:"New position"},{e:"Qualification",u:"Malaka",em:"🎓",ex:"Good qualification"}],
+    reading: "At a job {interview}: 'Tell me about yourself.' 'I have 3 years of {experience}. My {skills} include English, computer, and teamwork. I am looking for a good {position} with a fair {salary}. I am a hard worker.'",
+    writing: { prompt: "O'zingiz haqida: I have ___ years of experience.", answer: "i have" }
+  },
+  { title: "Do'stlar bilan Suhbat", desc: "Small talk, Casual conversation...", topic: "conversation",
+    vocab: [{e:"How are you?",u:"Qandaysiz?",em:"😊",ex:"How are you doing?"},{e:"What's up?",u:"Xabar nima?",em:"🤙",ex:"Hey, what's up?"},{e:"I'm fine",u:"Yaxshiman",em:"👍",ex:"I'm fine, thanks"},{e:"Not bad",u:"Yomon emas",em:"😐",ex:"Not bad, you?"},{e:"Really?",u:"Rostdanmi?",em:"😲",ex:"Really? That's great!"},{e:"I see",u:"Tushundim",em:"💡",ex:"Oh, I see"},{e:"Anyway",u:"Baribir/Xullas",em:"🔄",ex:"Anyway, let's go"}],
+    reading: "'Hey! {How are you}?' 'I'm {fine}, thanks! {What's up}?' 'Not much. {Anyway}, did you hear the news?' '{Really}? What happened?' 'I got a new job!' '{I see}! Congratulations!'",
+    writing: { prompt: "Do'stingizga yozing: Hey! How are you? I am ___", answer: "hey how are you i am" }
+  },
+  { title: "Sakkizinchi Hafta Takrori", desc: "50-55 kunlar takrori", topic: "review",
+    vocab: [{e:"Communication",u:"Muloqot",em:"💬",ex:"Good communication"},{e:"Confidence",u:"Ishonch",em:"💪",ex:"Speak with confidence"},{e:"Fluent",u:"Ravon",em:"🗣️",ex:"Speak fluently"},{e:"Progress",u:"Taraqqiyot",em:"📈",ex:"Great progress"},{e:"Success",u:"Muvaffaqiyat",em:"🏆",ex:"Great success"}],
+    reading: "I have made great {progress}! I can communicate in English. I speak with {confidence}. I am becoming more {fluent}. My {success} comes from daily practice. I will continue until I am perfect!",
+    writing: { prompt: "Muvaffaqiyatlar haqida: My biggest success is ___", answer: "my biggest success is" }
+  },
+
+  // WEEK 9 - Rivojlangan Mavzular  
+  { title: "Ingliz Tili Madaniyati", desc: "British vs American English, Culture...", topic: "culture",
+    vocab: [{e:"British English",u:"Britaniya ingliz tili",em:"🇬🇧",ex:"Colour, Favour"},{e:"American English",u:"Amerika ingliz tili",em:"🇺🇸",ex:"Color, Favor"},{e:"Accent",u:"Lahja",em:"🗣️",ex:"British accent"},{e:"Slang",u:"Argoт/Kundalik so'zlar",em:"😎",ex:"Cool slang"},{e:"Formal",u:"Rasmiy",em:"👔",ex:"Formal language"},{e:"Informal",u:"Norasmiy",em:"😊",ex:"Casual talk"},{e:"Polite",u:"Muloyim",em:"🎩",ex:"Be polite"}],
+    reading: "There are two main types of English: {British} and {American}. British people say 'colour' and Americans say 'color'. It is important to be {polite} in both. Learn both {formal} and {informal} English.",
+    writing: { prompt: "Yozing: I prefer ___ English (British/American)", answer: "i prefer" }
+  },
+  { title: "Idiomlar - 1", desc: "Break a leg, Piece of cake, Hit the books...", topic: "idioms",
+    vocab: [{e:"Break a leg",u:"Omad tilayman",em:"🦵",ex:"Break a leg in your exam!"},{e:"Piece of cake",u:"Juda oson",em:"🍰",ex:"This test is a piece of cake"},{e:"Hit the books",u:"O'qishga kirishmoq",em:"📚",ex:"Time to hit the books"},{e:"Under the weather",u:"Kasal",em:"🤒",ex:"I'm under the weather"},{e:"Cost an arm and a leg",u:"Juda qimmat",em:"💸",ex:"This car cost an arm and a leg"},{e:"Spill the beans",u:"Sir oshkor qilmoq",em:"🫘",ex:"Don't spill the beans"}],
+    reading: "Today I {hit the books} to study for my exam. My teacher said '{Break a leg}!' The exam was {a piece of cake} because I studied well. But I felt {under the weather} after the exam.",
+    writing: { prompt: "Idiom ishlatib yozing: This lesson is a piece of ___", answer: "this lesson is a piece of cake" }
+  },
+  { title: "Idiomlar - 2", desc: "Once in a blue moon, Bite the bullet...", topic: "idioms",
+    vocab: [{e:"Once in a blue moon",u:"Kam-kamdan",em:"🌕",ex:"I eat chocolate once in a blue moon"},{e:"Bite the bullet",u:"Qiyinchilikka chidamoq",em:"🦷",ex:"Just bite the bullet"},{e:"The ball is in your court",u:"Qaror sizga bog'liq",em:"⚽",ex:"Now the ball is in your court"},{e:"Hit the nail on the head",u:"To'g'ri aytmoq",em:"🔨",ex:"You hit the nail on the head"},{e:"Let the cat out of the bag",u:"Sirni ochib qo'ymoq",em:"🐱",ex:"Don't let the cat out of the bag"}],
+    reading: "Learning English is hard, but you must {bite the bullet} and keep going. I study {once in a blue moon}... wait, no! I study EVERY day! {The ball is in your court} - you choose to succeed!",
+    writing: { prompt: "Idiom ishlating: I study English ___ (every day)", answer: "i study english every day" }
+  },
+  { title: "Rasmiy Yozishmalar", desc: "Email, Letter writing - formal writing", topic: "formal_writing",
+    vocab: [{e:"Dear",u:"Aziz/Hurmatli",em:"✉️",ex:"Dear Mr. Smith"},{e:"Regards",u:"Hurmat bilan",em:"🤝",ex:"Kind regards"},{e:"Sincerely",u:"Samimiy",em:"💌",ex:"Yours sincerely"},{e:"Request",u:"Iltimos/So'rov",em:"🙏",ex:"I request you to"},{e:"Hereby",u:"Shu bilan",em:"📜",ex:"I hereby inform you"},{e:"Attached",u:"Ilova qilingan",em:"📎",ex:"Please see attached"},{e:"Inform",u:"Xabardor qilmoq",em:"📢",ex:"I inform you that"}],
+    reading: "{Dear} Mr. Johnson, I am writing to {inform} you about my English course. I have completed 58 days of study. Please see the {attached} report. Thank you for your time. Kind {regards}, Ali Bakirov.",
+    writing: { prompt: "Rasmiy xat yozing: Dear ___, I am writing to inform you...", answer: "dear" }
+  },
+  { title: "Prezentatsiya Qilish", desc: "How to present in English...", topic: "presentation",
+    vocab: [{e:"Today I will talk about",u:"Bugun men haqida gaplashaman",em:"🎤",ex:"Today I will talk about health"},{e:"First of all",u:"Avvalo",em:"1️⃣",ex:"First of all, let me say"},{e:"Furthermore",u:"Bundan tashqari",em:"➕",ex:"Furthermore, we see that"},{e:"In conclusion",u:"Xulosa qilib aytganda",em:"🎯",ex:"In conclusion..."},{e:"Thank you for listening",u:"Tinglayottganingiz uchun rahmat",em:"🙏",ex:"Thank you for listening"},{e:"Questions?",u:"Savollar bormi?",em:"❓",ex:"Any questions?"}],
+    reading: "{First of all}, good morning everyone. {Today I will talk about} my English learning journey. I have studied for 59 days. {Furthermore}, I have learned over 500 words. {In conclusion}, English is amazing! {Thank you for listening}. {Any questions?}",
+    writing: { prompt: "Prezentatsiya boshlang: Today I will talk about ___", answer: "today i will talk about" }
+  },
+  { title: "60-Kun - YAKUNIY DARS!", desc: "Siz muvaffaqiyatli 60 kunni tugatdingiz! 🎉", topic: "final",
+    vocab: [{e:"Congratulations!",u:"Tabriklaymiz!",em:"🎊",ex:"Congratulations on finishing!"},{e:"Achievement",u:"Yutuq",em:"🏆",ex:"A great achievement"},{e:"Fluent",u:"Ravon",em:"🗣️",ex:"Speak fluently"},{e:"Confident",u:"Ishonchli",em:"💪",ex:"Feel confident"},{e:"Continue",u:"Davom etmoq",em:"▶️",ex:"Continue learning"},{e:"Proud",u:"Faxrlanmoq",em:"😊",ex:"I am proud"},{e:"Future",u:"Kelajak",em:"🌟",ex:"Bright future"}],
+    reading: "{Congratulations}! You have completed 60 days of English learning! This is an amazing {achievement}. You should be very {proud} of yourself. Now you can speak English with {confidence}. {Continue} learning and you will become {fluent}. Your {future} is bright! Well done!",
+    writing: { prompt: "60 kunlik sarguzashtingizni tasvirlab yozing: In 60 days I learned ___", answer: "in 60 days i learned" }
+  }
+];
+
+// Ensure we have exactly 60 lessons
+while(lessonData.length < 60) {
+  const d = lessonData.length + 1;
+  lessonData.push({
+    title: `Takror va Mashq - ${d}`,
+    desc: `Kun ${d}: Oldingi mavzularni takrorlash`,
+    topic: "practice",
+    vocab: lessonData[d % lessonData.length]?.vocab || lessonData[0].vocab,
+    reading: lessonData[d % lessonData.length]?.reading || lessonData[0].reading,
+    writing: lessonData[d % lessonData.length]?.writing || lessonData[0].writing
+  });
+}
+
+// ============================================================
+// STATE
+// ============================================================
+let completedDays = JSON.parse(localStorage.getItem('completed') || '[]');
+let currentDay = null;
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  renderCalendar();
+  updateProgress();
+}
+
+function renderCalendar() {
+  const grid = document.getElementById('calendarGrid');
+  grid.innerHTML = '';
+  const today = completedDays.length;
+
+  for(let i = 1; i <= 60; i++) {
+    const done = completedDays.includes(i);
+    const unlocked = i === 1 || completedDays.includes(i - 1);
+    const isNext = i === today + 1;
+
+    const card = document.createElement('div');
+    card.className = 'day-card' + (done ? ' completed' : '') + (!unlocked && !done ? ' locked' : '') + (isNext ? ' today' : '');
+
+    const icons = ['📖','✏️','🔤','🗣️','👂','📝','🔄','👋','🔢','🎨','👨‍👩‍👧','🦵','🍎','📚','🎓','🏃','🤔','📅','🗓️','🏠','🎯','💼','🔁','🏠','🚗','⚽','🌧️','🏫','🛒','🔁','❤️','😊','👨‍🍳','📱','✈️','🌿','🔁','⏰','📖','🔮','⚖️','🔁','🍽️','📍','🏨','🏦','🎤','💬','🔁','📈','🇬🇧','🤙','🌕','✉️','🎤','🎉','⭐','🌟','💫','🏆'];
+
+    card.innerHTML = `
+      <div class="day-icon">${done ? '✅' : (!unlocked ? '🔒' : (icons[i-1]||'📚'))}</div>
+      <div class="day-num">${i}</div>
+      <div class="day-label">${done ? 'Bajarildi' : (!unlocked ? 'Qulflangan' : 'Kun')}</div>
+    `;
+
+    if(unlocked || done) {
+      card.onclick = () => openLesson(i);
+    }
+
+    grid.appendChild(card);
+  }
+}
+
+function updateProgress() {
+  const pct = (completedDays.length / 60) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = completedDays.length + ' / 60 kun';
+}
+
+// ============================================================
+// LESSON
+// ============================================================
+function openLesson(day) {
+  currentDay = day;
+  const data = lessonData[day - 1];
+  document.getElementById('homePage').style.display = 'none';
+  document.getElementById('lessonPage').style.display = 'block';
+  document.getElementById('lessonDayLabel').textContent = `KUN ${day} / 60`;
+  document.getElementById('lessonTitle').textContent = data.title;
+  document.getElementById('lessonDesc').textContent = data.desc;
+
+  // Activate vocab tab
+  switchTab('vocab', document.querySelector('.tab-btn'));
+  renderVocab(data);
+  renderReading(data);
+  renderWriting(data);
+  window.scrollTo(0,0);
+}
+
+function goHome() {
+  document.getElementById('homePage').style.display = 'block';
+  document.getElementById('lessonPage').style.display = 'none';
+  renderCalendar();
+}
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.getElementById('tabVocab').style.display = tab === 'vocab' ? 'block' : 'none';
+  document.getElementById('tabReading').style.display = tab === 'reading' ? 'block' : 'none';
+  document.getElementById('tabWriting').style.display = tab === 'writing' ? 'block' : 'none';
+}
+
+// ============================================================
+// VOCAB
+// ============================================================
+function renderVocab(data) {
+  const grid = document.createElement('div');
+  grid.className = 'vocab-grid';
+  data.vocab.forEach(v => {
+    const card = document.createElement('div');
+    card.className = 'vocab-card';
+    card.innerHTML = `
+      <span class="vocab-emoji">${v.em}</span>
+      <div class="vocab-info">
+        <div class="vocab-en">${v.e}</div>
+        <div class="vocab-uz">🇺🇿 ${v.u}</div>
+        <div class="vocab-example">💬 ${v.ex}</div>
+      </div>
+      <button class="speak-btn" onclick="speak('${v.e.replace(/'/g,"\\'")}')">🔊</button>
+    `;
+    card.onclick = (e) => { if(!e.target.classList.contains('speak-btn')) speak(v.e); };
+    grid.appendChild(card);
+  });
+  document.getElementById('tabVocab').innerHTML = '';
+  document.getElementById('tabVocab').appendChild(grid);
+}
+
+// ============================================================
+// READING
+// ============================================================
+function renderReading(data) {
+  const section = document.createElement('div');
+  section.className = 'reading-section';
+
+  // Parse text - make each word clickable and highlight {word}
+  let text = data.reading;
+  // Remove curly braces from display
+  const words = text.split(/(\s+)/);
+  let html = '<div class="reading-text">';
+  words.forEach(part => {
+    if(/^\s+$/.test(part)) { html += part; return; }
+    // Check if it's a highlighted word
+    const highlighted = part.match(/^\{(.+)\}$/);
+    const word = highlighted ? highlighted[1] : part.replace(/[{}]/g, '');
+    const displayWord = word;
+    html += `<span class="reading-word" onclick="speakWord('${word.replace(/'/g,"\\'")}', '${translateWord(word)}', event)">${displayWord}</span>`;
+  });
+  html += '</div>';
+  html += '<p style="color:var(--gray);font-size:0.8rem;margin-top:1rem;">💡 Har bir so\'z ustiga bossangiz, u gapiradi va tarjimasi chiqadi.</p>';
+  section.innerHTML = html;
+  document.getElementById('tabReading').innerHTML = '';
+  document.getElementById('tabReading').appendChild(section);
+}
+
+const wordDict = {
+  'hello':'Salom','hi':'Salom','good':'Yaxshi','morning':'Tong','evening':'Kechqurun','night':'Tun',
+  'cat':'Mushuk','dog':'It','apple':'Olma','fish':'Baliq','water':'Suv','sun':'Quyosh','moon':'Oy',
+  'family':'Oila','father':'Ota','mother':'Ona','brother':'Aka','sister':'Opa','go':'Bormoq',
+  'eat':'Yemoq','drink':'Ichmoq','sleep':'Uxlamoq','happy':'Xursand','sad':'Xafa','big':'Katta',
+  'small':'Kichik','red':'Qizil','blue':'Ko\'k','green':'Yashil','yellow':'Sariq','white':'Oq',
+  'today':'Bugun','tomorrow':'Ertaga','house':'Uy','school':'Maktab','book':'Kitob','friend':'Do\'st',
+  'english':'Ingliz tili','learn':'O\'rganmoq','speak':'Gapirmoq','read':'O\'qimoq','write':'Yozmoq',
+  'i':'Men','you':'Sen','he':'U (erkak)','she':'U (ayol)','we':'Biz','they':'Ular','my':'Mening'
+};
+
+function translateWord(word) {
+  return wordDict[word.toLowerCase()] || 'Ingliz so\'zi';
+}
+
+function speakWord(word, trans, event) {
+  speak(word);
+  const tip = document.getElementById('tooltip');
+  document.getElementById('tooltipEn').textContent = word;
+  document.getElementById('tooltipUz').textContent = '🇺🇿 ' + trans;
+  tip.style.display = 'block';
+  const x = Math.min(event.clientX + 10, window.innerWidth - 230);
+  const y = Math.min(event.clientY + 10, window.innerHeight - 80);
+  tip.style.left = x + 'px';
+  tip.style.top = y + 'px';
+  setTimeout(() => tip.style.display = 'none', 2500);
+}
+
+// ============================================================
+// WRITING
+// ============================================================
+function renderWriting(data) {
+  const section = document.createElement('div');
+  section.className = 'writing-section';
+  section.innerHTML = `
+    <div class="writing-prompt">
+      <div class="writing-prompt-label">✏️ Vazifa</div>
+      <div class="writing-prompt-text">${data.writing.prompt}</div>
+    </div>
+    <textarea class="writing-area" id="writingInput" placeholder="Bu yerga yozing..."></textarea>
+    <button class="check-btn" onclick="checkWriting('${data.writing.answer.replace(/'/g,"\\'")}')">✅ Tekshirish</button>
+    <div class="feedback-box" id="feedbackBox"></div>
+    <button class="check-btn" style="background:linear-gradient(135deg,var(--purple),var(--teal));margin-top:0.5rem" onclick="speak(document.getElementById('writingInput').value)">🔊 Gapirtirish</button>
+  `;
+  document.getElementById('tabWriting').innerHTML = '';
+  document.getElementById('tabWriting').appendChild(section);
+}
+
+function checkWriting(answer) {
+  const input = document.getElementById('writingInput').value.toLowerCase().trim();
+  const fb = document.getElementById('feedbackBox');
+  fb.style.display = 'block';
+  if(input.length < 3) {
+    fb.className = 'feedback-box try';
+    fb.innerHTML = '⚠️ Iltimos, biror narsa yozing!';
+    return;
+  }
+  if(input.includes(answer.toLowerCase())) {
+    fb.className = 'feedback-box good';
+    fb.innerHTML = '🎉 Ajoyib! Siz to\'g\'ri yozdingiz! Davom eting!';
+    speak("Excellent! Well done!");
+  } else {
+    fb.className = 'feedback-box try';
+    fb.innerHTML = `💪 Harakat qiling! Maslahat: "<strong>${answer}</strong>" bilan boshlang.`;
+  }
+}
+
+// ============================================================
+// COMPLETE DAY
+// ============================================================
+function completeDay() {
+  if(!completedDays.includes(currentDay)) {
+    completedDays.push(currentDay);
+    localStorage.setItem('completed', JSON.stringify(completedDays));
+  }
+  showConfetti();
+  const msg = document.getElementById('successMsg');
+  const txt = document.getElementById('successText');
+  if(currentDay === 60) {
+    txt.textContent = '🎊 Siz 60 kunlik kursni muvaffaqiyatli tugatdingiz! Siz ingliz tilini o\'rgandingiz!';
+  } else {
+    txt.textContent = `Kun ${currentDay} tugatildi! Ertaga ${currentDay + 1}-kunni oching.`;
+  }
+  msg.style.display = 'block';
+  updateProgress();
+  speak(currentDay === 60 ? "Congratulations! You completed the entire course!" : "Great job! Day " + currentDay + " complete!");
+}
+
+function closeSuccess() {
+  document.getElementById('successMsg').style.display = 'none';
+  goHome();
+}
+
+// ============================================================
+// CONFETTI
+// ============================================================
+function showConfetti() {
+  const container = document.getElementById('confettiContainer');
+  container.innerHTML = '';
+  const colors = ['#e94560','#00b4d8','#06d6a0','#ffd166','#c77dff','#ff6b6b'];
+  for(let i = 0; i < 80; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.cssText = `
+      left: ${Math.random()*100}%;
+      background: ${colors[Math.floor(Math.random()*colors.length)]};
+      width: ${Math.random()*12+5}px;
+      height: ${Math.random()*12+5}px;
+      border-radius: ${Math.random()>0.5?'50%':'2px'};
+      animation-duration: ${Math.random()*2+1.5}s;
+      animation-delay: ${Math.random()*0.8}s;
+    `;
+    container.appendChild(piece);
+  }
+  setTimeout(() => container.innerHTML = '', 4000);
+}
+
+// ============================================================
+// TEXT TO SPEECH
+// ============================================================
+function speak(text) {
+  if(!text || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const clean = text.replace(/\{|\}/g,'');
+  const utt = new SpeechSynthesisUtterance(clean);
+  utt.lang = 'en-US';
+  utt.rate = 0.85;
+  utt.pitch = 1;
+  // Try to use a good voice
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v => v.lang === 'en-US' && v.name.includes('Google')) ||
+                    voices.find(v => v.lang === 'en-US') ||
+                    voices.find(v => v.lang.startsWith('en'));
+  if(preferred) utt.voice = preferred;
+  window.speechSynthesis.speak(utt);
+}
+
+// Load voices
+window.speechSynthesis.onvoiceschanged = () => {};
+
+// Hide tooltip on click elsewhere
+document.addEventListener('click', (e) => {
+  if(!e.target.classList.contains('reading-word')) {
+    document.getElementById('tooltip').style.display = 'none';
+  }
+});
+
+// Initialize
+init();
+</script>
+</body>
+</html>
